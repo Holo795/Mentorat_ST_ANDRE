@@ -1,0 +1,91 @@
+<nav class="w3-sidebar w3-red w3-collapse w3-top w3-large w3-padding"
+    style="z-index:3;width:300px;font-weight:bold;" id="mySidebar"><br>
+    <a href="javascript:void(0)" onclick="menu_close()" class="w3-button w3-hide-large w3-display-topleft"
+        style="width:100%;font-size:22px">Fermer le menu</a>
+    <div class="w3-container">
+        <h3 class="w3-padding-64"><b>Le Mantorat</b></h3>
+    </div>
+    <div class="w3-bar-block">
+        <a href="#" onclick="menu_close()" class="w3-bar-item w3-button w3-hover-white">Accueil</a>
+        <a href="#infos" onclick="menu_close()" class="w3-bar-item w3-button w3-hover-white">Informations</a>
+        <a href="/user/students" onclick="menu_close()" class="w3-bar-item w3-button w3-hover-white">-> Espace Demande</a>
+        <a href="/user/mentors" onclick="menu_close()" class="w3-bar-item w3-button w3-hover-white">-> Espace Mentor</a>
+        <a href="#contact" onclick="menu_close()" class="w3-bar-item w3-button w3-hover-white">Nous contacter ?</a>
+        <a href="/cgu" onclick="menu_close()" class="w3-bar-item w3-button w3-hover-white">CGU</a>
+    </div>
+    <div class="w3-panel w3-bottom">
+        <% if (logged) { %>
+            <a href="/login/logout" class="w3-bar-item w3-button w3-hover-white">Se déconnecter</a>
+            <p class="w3-tiny"> connecté en tant que <%= username %> </p>
+        <% } else { %>
+            <button class="w3-bar-item w3-button w3-hover-none" onclick="modal_open()">Se connecter</button>
+            <p class="w3-tiny"> </p>
+        <% } %> 
+    </div>
+</nav>   
+
+<div id="login-modal" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 w3-animate-left">
+      <header class="w3-container w3-red"> 
+        <span onclick="document.getElementById('login-modal').style.display='none'"
+        class="w3-button w3-display-topright w3-hover-red !important">×</span>
+        <h4>Connexion (Veuillez saisir vos Identifiants élève)</h4>
+        <p class="w3-tiny" style="color: black; font-size: 12px;" id="error-modal"><b>Erreur : <%= login_error %></b></p>
+      </header>
+      <div class="w3-padding">
+        <br>
+        <form action="/login" method="post">
+            <div class="w3-section">
+                <label for="username">Nom d'utilisateur</label>
+                <input class="w3-input w3-border" type="text" name="username" id="username" required>
+            </div>
+            <div class="w3-section">
+                <label for="password">Mot de passe</label>
+                <input class="w3-input w3-border" type="password" name="password" id="password" required>
+            </div>
+            <button type="submit" class="w3-button w3-block w3-padding-large w3-red w3-margin-bottom">Se connecter</button>
+        </form>
+        <br>
+      </div>
+      <footer class="w3-container">
+        <p style="font-size: 11px;"><a href="https://www.ecoledirecte.com/">EcoleDirect</a> login</p>
+      </footer>
+    </div>
+</div>
+<!-- Top menu on small screens -->
+<header class="w3-container w3-top w3-hide-large w3-red w3-xlarge w3-padding">
+    <a href="javascript:void(0)" class="w3-button w3-red w3-margin-right" onclick="menu_open()">☰</a>
+    <span>Le Mantorat</span>
+</header>
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large" onclick="menu_close()" style="cursor:pointer" title="close side menu"
+    id="myOverlay"></div>
+
+<script>
+    // Script to open and close sidebar
+    function menu_open() {
+        document.getElementById("mySidebar").style.display = "block";
+        document.getElementById("myOverlay").style.display = "block";
+    }
+    function menu_close() {
+        document.getElementById("mySidebar").style.display = "none";
+        document.getElementById("myOverlay").style.display = "none";
+    }
+    // Modal Image Gallery
+    function onClick(element) {
+        document.getElementById("img01").src = element.src;
+        document.getElementById("modal01").style.display = "block";
+        var captionText = document.getElementById("caption");
+        captionText.innerHTML = element.alt;
+    }
+
+    function modal_open() {
+        document.getElementById('login-modal').style.display='block'
+        document.getElementById('error-modal').style.display='none'
+    
+    }
+</script>
+
+<% if (login_error) { %> 
+    <script>document.getElementById('login-modal').style.display='block';</script>
+<% } %>
