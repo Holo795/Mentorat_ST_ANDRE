@@ -21,9 +21,6 @@ const userRouter = require('./routes/user')
 app.use('/user', userRouter)
 
 const data = require('./api/data')
-
-var i = 0;
-
 app.get('/', (req, res) => {
   res.render('index', { logged: loginRouter.is_logged(req, res) , username: data.get_username(req, res), login_error: req.session.login_error });
   req.session.login_error = false;
