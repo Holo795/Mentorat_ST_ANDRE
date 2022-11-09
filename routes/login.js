@@ -4,10 +4,10 @@ const router = express.Router()
 const request = require('../api/request')
 const database = require('../database/database')
 
+
 router.post('/', (req, res, next) => {
     const identifiant = req.body.username
     const motdepasse = req.body.password
-
     if (is_logged(req, res)) {
         res.redirect(req.get('referer'))
     } else {
@@ -15,22 +15,17 @@ router.post('/', (req, res, next) => {
 
         request.login(identifiant, motdepasse).then(data => {
             console.log(data)
-            console.log(data.accounts[0].profile)
             if (data.accounts[0].typeCompte === "E") {
                 res.cookie('user', data.accounts[0].id, {maxAge: 360000, signed: true})
-                res.redirect("/")
                 database.add_user(data.accounts[0])
+                res.redirect(req.get('referer'))
             } else {
-                request.reset_token();
-                res.clearCookie('user')
                 req.session.login_error = "Ceci n'est pas un compte étudiant";
-                res.redirect('/')
+                logout(req, res)
             }
-        }).catch(err => {
-            request.reset_token();
-            res.clearCookie('user')
+        }).catch(err => {                       
             req.session.login_error = err;
-            res.redirect('/')
+            logout(req, res)
         });    
 
     }
@@ -38,9 +33,7 @@ router.post('/', (req, res, next) => {
 })
 
 router.get('/logout', (req, res) => {
-    request.reset_token();
-    res.clearCookie('user')
-    res.redirect('/')
+    logout(req, res)
 })
 
 router.post('*', (req, res) => {
@@ -52,6 +45,12 @@ router.post('*', (req, res) => {
 router.get('/', (req, res) => {
     res.redirect('/');
 })
+
+function logout(req, res) {
+    request.reset_token();
+    res.clearCookie('user')
+    res.redirect(req.get('referer'))
+}
 
 
 function get_data(req, res) {
@@ -81,8 +80,8 @@ function is_logged(req, res) {
 }
 
 module.exports = router
-module.exports.get_data = get_data
 module.exports.is_logged = is_logged
-
+module.exports.get_data = get_data
+module.exports.logout = logout
 
 // Path: routes\login.js
